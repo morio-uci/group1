@@ -1,6 +1,9 @@
 #knexfile
 knexfile.js
 
+#IDE files
+.idea/
+
 # Logs
 logs
 *.log
