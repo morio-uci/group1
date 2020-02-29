@@ -1,0 +1,40 @@
+{
+  "name": "group1",
+  "version": "1.0.0",
+  "description": "Sever-side Development Group #1 Assignment Week 6",
+  "main": "index.js",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "express-graphql": "^0.9.0",
+    "graphql": "^14.6.0",
+    "knex": "^0.20.10",
+    "pg": "^7.18.2"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.1.0"
+  },
+  "scripts": {
+    "start": "node -r esm index.js",
+    "make-db": "dropdb group1-week6-dev; createdb group1-week6-dev",
+    "make-test-db": "dropdb group1-week6-test; createdb group1-week6-test",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run",
+    "test-seed": "npm run seed -- --env=test",
+    "reset-db": "npm run make-db; npm run migrate; npm run seed",
+    "reset-test-db": "npm run make-test-db; npm run migrate -- --env=test; npm run test-seed",
+    "test": "NODE_ENV=test mocha --exit --recursive -r esm",
+    "db-test": "npm run reset-test-db; npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/morio-uci/group1.git"
+  },
+  "author": "John Morio Sakaguchi & Korakoch Gerrard",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/morio-uci/group1/issues"
+  },
+  "homepage": "https://github.com/morio-uci/group1#readme"
+}
