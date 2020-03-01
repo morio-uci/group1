@@ -11,11 +11,6 @@ main {
 .tagged-image input {
     outline: none;
     border: none;
-    width: 50rem;
+    width: 10rem;
     text-align: center;
-}
-
-.tagged-image input:focus {
-    border: 1px black solid ;
-    outline: medium currentColor none;
 }

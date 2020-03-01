@@ -3,10 +3,12 @@ addEventListener('DOMContentLoaded', async () => {
     const promises = tagInputs.map(input => {
         input.addEventListener('input', async () => {
             await fillDataList(input)
+            autoResizeInput(input)
         })
 
         input.addEventListener('change', async () => {
             await updateInput(input)
+            autoResizeInput(input)
         })
 
         input.addEventListener('focus', async () => {
@@ -21,16 +23,36 @@ addEventListener('DOMContentLoaded', async () => {
     })
     await Promise.all(promises)
 })
-const fillDataCallId = {}
-
+const autoResizeInput = (input) => {
+    const sizerId = input.id+'-input-sizer'
+    const sizerText = input.value || input.placeholder
+    let sizer = document.getElementById(sizerId)
+    if (!sizer) {
+        sizer = document.createElement('span')
+        sizer.id = sizerId
+        sizer.style.color = document.body.style.backgroundColor
+        sizer.style.font = window.getComputedStyle(input).font
+        sizer.style.fontSize = window.getComputedStyle(input).fontSize
+        document.body.append(sizer)
+    }
+    sizer.innerHTML = ''
+    sizer.appendChild(document.createTextNode(sizerText))
+    sizer.style.display = 'inline'
+    input.style.width = (sizer.offsetWidth+20).toString() + 'px'
+    sizer.style.display = 'none'
+}
 const fillDataList = async input => {
-    if(!fillDataCallId.hasOwnProperty(input.id)){
-        fillDataCallId[input.id] = 0
+    if(!fillDataList.hasOwnProperty('staticCallId')) {
+        fillDataList.staticCallId = {}
+    }
+
+    if(!fillDataList.staticCallId.hasOwnProperty(input.id)){
+        fillDataList.staticCallId[input.id] = 0
     }
     else {
-        fillDataCallId[input.id]++
+        fillDataList.staticCallId[input.id]++
     }
-    const myCallId = fillDataCallId[input.id]
+    const myCallId = fillDataList.staticCallId[input.id]
     const datalist = document.getElementById(input.id + '-list')
     datalist.innerHTML = ''
     try {
@@ -48,13 +70,15 @@ const fillDataList = async input => {
                     query: {query: input.value}
                 }
             })
+
         })
+
         // only fill if we were the latest call
-        if (myCallId === fillDataCallId[input.id]) {
+        if (myCallId === fillDataList.staticCallId[input.id]) {
             const results = (await result.json()).data.search.results
             datalist.innerHTML = ''
-            let option
 
+            let option
             results.forEach(tags => {
                 option = document.createElement('option')
                 option.appendChild(document.createTextNode(tags))
@@ -123,8 +147,8 @@ const loadInput = async input => {
 
             })
         })
-
         input.value = (await result.json()).data.getTags.tags
+        autoResizeInput(input)
         input.disabled = false
     }
     catch (e){
