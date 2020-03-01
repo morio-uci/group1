@@ -25,13 +25,16 @@ export const searchTags = async search => {
         const popularTags = await popularQuery.select(knex.raw("tag, count(tag)"))
         return {results: popularTags.map(row => row.tag)}
     }
+
+    const excludeTags = search.query.split(' ').filter(tag=> tag.trim() !== '')
+
     // last char is a space
     if (search.query.charAt(search.query.length-1) === ' ') {
-        const excludeTags = search.query.trim().split(' ')
+
         let popularTags
-        let preTagLine = search.query
-        // split will include an empty string if string is empty
-        if (excludeTags[0] === '') {
+        let preTagLine
+
+        if (excludeTags.length === 0) {
             popularTags = await popularQuery.select(knex.raw("tag, count(tag)"))
             preTagLine = ''
         }
@@ -39,12 +42,12 @@ export const searchTags = async search => {
             popularTags = await popularQuery
                 .whereNotIn('tag', excludeTags)
                 .select(knex.raw("tag, count(tag)"))
+            preTagLine = excludeTags.join(' ') + ' '
         }
         return {results: popularTags.map(row => preTagLine + row.tag)}
     }
 
     // last character isn't a space
-    const excludeTags = search.query.trim().split(' ')
     const partialTag = excludeTags.pop()
     const partialQuery = knex('tags')
         .where('tag', 'like', knex.raw('?', [partialTag + '%']))
@@ -68,19 +71,21 @@ export const searchTags = async search => {
 export const updateTags = async update => {
     if (!update.hasOwnProperty('id') ||
         !update.hasOwnProperty('tags') ||
-        update.id.trim() === '' ||
-        update.tags.trim() === '') {
+        update.id.trim() === '') {
 
         return {id: update.hasOwnProperty('id') ? update.id : '', tags: '' }
     }
 
     await knex('tag_lines').where({'pic_id': update.id}).del()
-    const tagsArray = update.tags.split(' ')
-    let insertString = knex('tags')
-        .insert(tagsArray.map(tag => ({tag: tag}))).toString()
-    insertString += ' ON CONFLICT (tag) DO  NOTHING'
-    await knex.raw(insertString)
-    await knex('tag_lines')
-        .insert(tagsArray.map(tag => ({pic_id: update.id, tag: tag})))
+    const tags = [...new  Set(update.tags.split(' ').filter(tag => tag.trim() !== ''))]
+    if (tags.length > 0) {
+        let insertString = knex('tags')
+            .insert(tags.map(tag => ({tag: tag.toLowerCase()}))).toString()
+        insertString += ' ON CONFLICT (tag) DO  NOTHING'
+        await knex.raw(insertString)
+        await knex('tag_lines')
+            .insert(tags.map(tag => ({pic_id: update.id, tag: tag.toLowerCase()})))
+
+    }
     return await getTags(update.id)
 }

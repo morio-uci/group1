@@ -1,0 +1,21 @@
+main {
+    margin: 0 auto 0 auto;
+    text-align: center;
+}
+
+
+.tagged-image {
+    margin: 0 auto 10px auto;
+}
+
+.tagged-image input {
+    outline: none;
+    border: none;
+    width: 50rem;
+    text-align: center;
+}
+
+.tagged-image input:focus {
+    border: 1px black solid ;
+    outline: medium currentColor none;
+}
