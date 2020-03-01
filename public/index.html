@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <title>Image Tagger</title>
+    <link href="static/index.css" rel="stylesheet" />
+    <script src="static/index.js"></script>
 </head>
 <body>
 <main>
+    <h1>Image Tagging API Example</h1>
     <img src="img1.jpg" alt="first image" />
-    Tags <input id="img1" list="img1-list" value="img1 tags" />
-    <datalist id="img1-list">
-        <option>img1 tags ab</option>
-        <option>img1 tags abc</option>
-        <option>img1 tags abc</option>
-    </datalist>
-    <img src="img2.jpg" alt="first image" />
-    Tags <input id="img2" list="img2-list" value="img2 tags" />
-    <datalist id="img2-list">
-        <option>img2 tags d</option>
-        <option>img2 tags dfg</option>
-        <option>img2 tags dfgh</option>
-    </datalist>
-
-    <img src="img3.jpg" alt="first image" />
-    Tags <input id="img3" list="img1-list" value="img3 tags"/>
-    <datalist id="img3-list">
-        <option>img3 tags klj</option>
-        <option>img3 tags klja</option>
-        <option>img4 tags kljab</option>
-    </datalist>
+    <br/>
+    <div class="tagged-image">
+        <input class="tag-input" id="img1" list="img1-list" placeholder="...click here to enter tags"/>
+        <datalist id="img1-list">
+        </datalist>
+    </div>
+    <br />
+    <div class="tagged-image">
+        <img src="img2.jpg" alt="second image" />
+        <br/>
+        <input class="tag-input" id="img2" list="img2-list" placeholder="...click here to enter tags"/>
+        <datalist id="img2-list">
+        </datalist>
+    </div>
+    <br />
+    <div class="tagged-image">
+        <img src="img3.jpg" alt="third image" />
+        <br/>
+        <input class="tag-input" id="img3" list="img3-list" placeholder="...click here to enter tags"/>
+        <datalist id="img3-list">
+        </datalist>
+    </div>
 </main>
 </body>
 </html>
