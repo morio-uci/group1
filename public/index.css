@@ -32,3 +32,11 @@ main {
     padding: 2px;
     line-height: 2rem;
 }
+
+.error-msg {
+    color: white;
+    background-color: orangered;
+    border-radius: 5px;
+    border: black 2px solid;
+    padding: 3px;
+}
