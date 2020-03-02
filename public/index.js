@@ -9,6 +9,8 @@ addEventListener('DOMContentLoaded', async () => {
         input.addEventListener('change', async () => {
             await updateInput(input)
             autoResizeInput(input)
+            await updatePopularTags('popular-tags')
+            await updateUnusedTags('unused-tags')
         })
 
         input.addEventListener('focus', async () => {
@@ -22,6 +24,8 @@ addEventListener('DOMContentLoaded', async () => {
         return loadInput(input)
     })
     await Promise.all(promises)
+    await updatePopularTags('popular-tags')
+    await updateUnusedTags('unused-tags')
 })
 const autoResizeInput = (input) => {
     const sizerId = input.id+'-input-sizer'
@@ -157,5 +161,95 @@ const loadInput = async input => {
         input.disabled = false
         input.readonly = true
         input.style.color = 'red'
+    }
+}
+
+const updatePopularTags = async (id) => {
+    const tagsDiv = document.getElementById(id)
+    try {
+        const result = await fetch('api/graphql', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query:
+                    `query PopularTags {
+                        popularTags{
+                          total
+                          tags {
+                            tag
+                            count
+                          }
+                        }
+                    }`
+
+            })
+        })
+        const data = (await result.json()).data.popularTags
+        tagsDiv.innerHTML = ''
+        let tagEl
+        const maxCount = data.total > 0 ? data.tags[0].count : 0
+
+
+        data.tags.forEach(tagData => {
+            tagEl = document.createElement('span')
+            tagEl.classList.add('popular-tag')
+            // red to green scale from highest count to lowest
+            const hue = maxCount === 1 ? 0 : (120 - 120/(maxCount-1)*(tagData.count-1))
+            tagEl.style.backgroundColor = `hsl(${hue}, 75%, 50%)`
+            const fontSize = maxCount === 1 ? 1 : (1.25/(maxCount-1)*(tagData.count-1) + 0.75)
+            console.log(fontSize)
+            tagEl.style.fontSize = `${fontSize.toFixed(2)}rem`
+            const tagText = document.createTextNode(tagData.tag)
+            tagEl.appendChild(tagText)
+            tagsDiv.appendChild(tagEl)
+            tagsDiv.innerHTML += ' '
+        })
+    }
+    catch (e){
+        console.log(e.message)
+        const errorSpan = document.createElement('span')
+        errorSpan.classList.add('error-msg')
+        const errorText = document.createTextNode('error loading tags')
+        errorSpan.appendChild(errorText)
+        tagsDiv.appendChild(errorSpan)
+    }
+
+}
+
+const updateUnusedTags = async (id) => {
+    const tagsDiv = document.getElementById(id)
+    try {
+        const result = await fetch('api/graphql', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                query:
+                    `query UnusedTags {
+                          unusedTags{                              
+                            tags
+                          }
+                      }`
+
+            })
+        })
+        const data = (await result.json()).data.unusedTags
+        tagsDiv.innerHTML = ''
+        let tagEl
+
+        data.tags.forEach(tag => {
+            tagEl = document.createElement('span')
+            tagEl.classList.add('unused-tag')
+            const tagText = document.createTextNode(tag)
+            tagEl.appendChild(tagText)
+            tagsDiv.appendChild(tagEl)
+            tagsDiv.innerHTML += ' '
+        })
+    } catch (e) {
+        console.log(e.message)
+        const errorSpan = document.createElement('span')
+        errorSpan.classList.add('error-msg')
+        const errorText = document.createTextNode('error loading tags')
+        errorSpan.appendChild(errorText)
+        tagsDiv.appendChild(errorSpan)
     }
 }
