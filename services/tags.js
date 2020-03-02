@@ -89,3 +89,53 @@ export const updateTags = async update => {
     }
     return await getTags(update.id)
 }
+
+export const getPopularTags = async paging => {
+    setDefaultIntOnMember(paging, 'limit', 100)
+    setDefaultIntOnMember(paging, 'offset', 0)
+
+    const results = await knex('tag_lines')
+        .groupBy('tag')
+        .orderBy('count', 'desc')
+        .limit(paging.limit)
+        .offset(paging.offset)
+        .select(knex.raw("tag, count(tag) AS count, count(*) OVER() AS total"))
+
+    if(results.length === 0) {
+        return {total: 0, tags: []}
+    }
+    return {
+        total: parseInt(results[0].total),
+        tags: results.map(r => ({tag: r.tag, count: parseInt(r.count)}))
+    }
+}
+
+export const getUnusedTags = async paging => {
+    setDefaultIntOnMember(paging, 'limit', 100)
+    setDefaultIntOnMember(paging, 'offset', 0)
+
+    const exludeSelect = knex('tag_lines')
+        .distinct('tag')
+
+    const results = await knex('tags')
+        .orderBy('tag')
+        .limit(paging.limit)
+        .offset(paging.offset)
+        .whereNotIn('tag', exludeSelect)
+        .select(knex.raw('tag, count(*) OVER() AS total'))
+
+    if (results.length === 0) {
+        return {total: 0, tags: [0]}
+    }
+
+    return {
+        total: parseInt(results[0].total),
+        tags: results.map(r => r.tag)
+    }
+}
+
+const setDefaultIntOnMember = (obj, member, value) => {
+    if (!obj.hasOwnProperty(member) || !Number.isInteger(obj[member])) {
+        obj[member] = value
+    }
+}

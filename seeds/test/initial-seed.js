@@ -8,7 +8,8 @@ export const seed = async knex => {
     await knex('tags').insert([
         {tag: 'beautiful'},
         {tag: 'scenic'},
-        {tag: 'scenery'}
+        {tag: 'scenery'},
+        {tag: 'monochrome'}
     ])
 
     await knex('tag_lines').insert([

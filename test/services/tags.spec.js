@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 import knex from '../../database'
-import {getTags, updateTags, searchTags} from '../../services/tags'
+import {getTags, updateTags, searchTags, getPopularTags, getUnusedTags} from '../../services/tags'
 
 describe('tags service', () => {
     before( async () => {
@@ -115,5 +115,56 @@ describe('tags service', () => {
             expect(result.tags, "tags wasn't correct").to.be.equal('')
         })
 
+    })
+
+    describe ('getPopularTags', () => {
+        it('gets the tags and their count', async () => {
+            const result = await getPopularTags({})
+            expect(result.tags, "tags weren't correct").to.have.ordered.members = [
+                {tag: "beautiful", count: 2},
+                {tag: "scenic", count: 1}
+                ]
+            expect(result.total, "total wasn't correct").to.equal(2)
+        })
+
+        it('gets limit=1 of the tags and their count', async () => {
+            const result = await getPopularTags({limit: 1})
+            expect(result.tags, "tags weren't correct").to.have.ordered.members = [
+                {tag: "beautiful", count: 2}
+            ]
+            expect(result.tags, "there wasn't just one result").to.have.lengthOf(1)
+            expect(result.total, "total wasn't correct").to.equal(2)
+        })
+
+        it('gets limit=1, offset=1 of the tags and their count', async () => {
+            const result = await getPopularTags({limit: 1, offset: 1})
+            expect(result.tags, "tags weren't correct").to.have.ordered.members = [
+                {tag: "scenic", count: 1}
+            ]
+            expect(result.tags, "there wasn't just one result").to.have.lengthOf(1)
+            expect(result.total, "total wasn't correct").to.equal(2)
+        })
+    })
+
+    describe("getUnusedTags", () => {
+        it('gets the tags and their count', async () => {
+            const result = await getUnusedTags({})
+            expect(result.tags, "tags weren't correct").to.have.ordered.members = ["monochrome", "scenery"]
+            expect(result.total, "total wasn't correct").to.equal(2)
+        })
+
+        it('gets limit=1 of the tags and their count', async () => {
+            const result = await getUnusedTags({limit: 1})
+            expect(result.tags, "tags weren't correct").to.have.ordered.members = ["monochrome"]
+            expect(result.tags, "there wasn't just one result").to.have.lengthOf(1)
+            expect(result.total, "total wasn't correct").to.equal(2)
+        })
+
+        it('gets limit=1, offset=1 of the tags and their count', async () => {
+            const result = await getUnusedTags({limit: 1, offset: 1})
+            expect(result.tags, "tags weren't correct").to.have.ordered.members = ["scenery"]
+            expect(result.tags, "there wasn't just one result").to.have.lengthOf(1)
+            expect(result.total, "total wasn't correct").to.equal(2)
+        })
     })
 })

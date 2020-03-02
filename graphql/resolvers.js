@@ -1,16 +1,10 @@
-import {getTags, searchTags, updateTags} from '../services/tags'
+import {getTags, searchTags, updateTags, getPopularTags, getUnusedTags} from '../services/tags'
 
 const resolvers =  {
-    getTags: async ({id}) => {
-        return await getTags(id)
-    },
-    search: async ({query}) => {
-        return await searchTags(query)
-    },
-    updateTags: async ({update}) => {
-        return await updateTags(update)
-    }
-
-
+    getTags: async ({id}) =>  await getTags(id),
+    search: async ({query}) => await searchTags(query),
+    updateTags: async ({update}) => await updateTags(update),
+    popularTags: async options => await getPopularTags(options.paging || {}),
+    unusedTags: async options => await getUnusedTags(options.paging || {})
 }
 export default resolvers
