@@ -7,7 +7,7 @@ const app = express();
 const staticRoute = express.static('public')
 const env = process.env.NODE_ENV || 'development'
 const PORT = process.env.PORT || 8080
-const HOST = process.env.HOST || localhost
+const HOST = process.env.HOST || 'localhost'
 
 app.use('/api/graphql', graphqlHTTP({
     schema,
