@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Sever-side Development Group #1 Assignment Week 6",
   "main": "index.js",
+  "engines": {
+    "node": "13.7.x"
+  },
   "dependencies": {
     "esm": "^3.2.25",
     "express": "^4.17.1",
