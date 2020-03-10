@@ -1,6 +1,3 @@
-#knexfile
-knexfile.js
-
 #IDE files
 .idea/
 

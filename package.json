@@ -17,13 +17,15 @@
   },
   "scripts": {
     "start": "node -r esm index.js",
+    "build": "npm run migrate; npm run seed",
     "make-db": "dropdb group1-week6-dev; createdb group1-week6-dev",
     "make-test-db": "dropdb group1-week6-test; createdb group1-week6-test",
     "migrate": "knex --esm migrate:latest",
     "seed": "knex --esm seed:run",
-    "test-seed": "npm run seed -- --env=test",
+    "test-seed": "NODE_ENV=test knex --esm seed:run",
+    "test-migrate": "NODE_ENV=test knex --esm migrate:latest",
     "reset-db": "npm run make-db; npm run migrate; npm run seed",
-    "reset-test-db": "npm run make-test-db; npm run migrate -- --env=test; npm run test-seed",
+    "reset-test-db": "npm run make-test-db; npm run test-migrate; npm run test-seed",
     "test": "NODE_ENV=test mocha --exit --recursive -r esm",
     "db-test": "npm run reset-test-db; npm run test"
   },

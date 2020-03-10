@@ -1,10 +1,15 @@
-/******
- * Because we have different postgresql servers settings the knexfile.js isn't tract in git
- * This is a sample file, please make a file called knexfile.js in the same directory and
- * use this sample file with the database setting that suit your postgresql server
- */
-
 module.exports = {
+
+    production: {
+        client: 'postgresql',
+        connection: process.env.DATABASE_URL,
+        migrations: {
+            directory: './migrations',
+        },
+        seeds: {
+            directory: './seeds/prod',
+        }
+    },
 
     development: {
         client: 'postgresql',

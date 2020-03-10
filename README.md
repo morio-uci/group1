@@ -4,8 +4,7 @@
 ### Setup
 First do the following:
 
-1. Copy `knexfile.js.sample` in the root directory to `knexfile.js`
-2. Then edit `knexfile.js` to your systems Postgresql server specifications
+1. Edit `knexfile.js` to your systems Postgresql server specifications
 
 Then to start the server run the following commands
 1. `npm i`
