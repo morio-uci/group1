@@ -7,6 +7,7 @@ const app = express();
 const staticRoute = express.static('public')
 const env = process.env.NODE_ENV || 'development'
 const PORT = process.env.PORT || 8080
+const HOST = process.env.HOST || localhost
 
 app.use('/api/graphql', graphqlHTTP({
     schema,
@@ -16,7 +17,7 @@ app.use('/api/graphql', graphqlHTTP({
 
 app.use( staticRoute )
 app.use('/static', staticRoute )
-app.listen(PORT, 'localhost', () => {console.log(`Server running on http://localhost:${PORT}`)})
+app.listen(PORT, HOST, () => {console.log(`Server running on http://${HOST}:${PORT}`)})
 
 
 export default app;
